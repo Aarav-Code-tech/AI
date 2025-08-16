@@ -1,0 +1,68 @@
+import pyttsx3
+import speech_recognition as sr
+import webbrowser
+from datetime import datetime
+
+def speak(text):
+    eng = pyttsx3.init()
+    eng.setProperty("rate", 150)
+    eng.setProperty("volume", 1)
+    eng.say(text)
+    eng.runAndWait()
+
+def b():
+    recognizer = sr.Recognizer()
+    with sr.Microphone() as source:
+        print("Listening...")
+        recognizer.adjust_for_ambient_noise(source)
+        audio = recognizer.listen(source)
+    try:
+        cmd = recognizer.recognize_google(audio)
+        print(f"You said: {cmd}")
+        return cmd.lower()
+    except sr.UnknownValueError:
+        speak("Sorry, I didn't understand that.")
+    except sr.RequestError as e:
+        speak("L womp womp")
+    return ""
+
+def respond(cmd):
+    if "hello" in cmd:
+        speak("Hello! How can I assist you today?")
+    elif "time" in cmd:
+        now = datetime.now()
+        speak(f"The current time is {now.strftime('%H:%M')}.")
+    elif "date" in cmd:
+        now = datetime.now()
+        speak(f"Today's date is {now.strftime('%Y-%m-%d')}.")
+    elif "open youtube" in cmd:
+        speak("Definitely opening YouTube")
+        webbrowser.open("https://www.youtube.com/shorts/FPam25J81tE")
+    elif "open google" in cmd:
+        speak("Sure, I'm opening Google for you.")
+        webbrowser.open("https://www.google.com")
+    elif "search" in cmd:
+        query = cmd.replace("search", "").strip()
+        speak(f"Searching for {query}")
+        webbrowser.open(f"https://www.google.com/search?q={query}")
+    elif "ai" in cmd or "gemini" in cmd:
+        speak("Opening Gemini AI")
+        webbrowser.open("https://gemini.google.com/app")
+    elif "chatgpt" in cmd:
+        speak("Opening ChatGPT")
+        webbrowser.open("https://chat.openai.com/")
+    elif "song" in cmd:
+        speak("Opening Best Song of the Year")
+        webbrowser.open("https://www.youtube.com/shorts/kC_NpUPiW3Q")
+    elif "bye" in cmd or "exit" in cmd:
+        speak("Bye")
+        webbrowser.open("https://in.images.search.yahoo.com/search/images?p=Funny+face+emoji")
+        return False
+    else:
+        speak("Sorry, I didn't understand that.")
+    return True
+
+while True:
+    cmd = b()
+    if cmd and not respond(cmd):
+        break
