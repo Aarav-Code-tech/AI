@@ -1,0 +1,35 @@
+import streamlit as st
+from PIL import Image
+import re
+from io import BytesIO
+import requests
+api="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"
+url="https://api-inference.huggingface.co/models/stabilityai/stable-diffusion-3-medium-diffusers"
+def safe(prompt):
+  bad_words=["violence","terror","attack","suicide","bomb","abuse","murder","self-harm","nudity","hate speech","racism"]
+  return not re.search("|".join(bad_words),prompt,re.IGNORECASE)
+  return none
+def gen(prompt):
+  if not safe(prompt):
+    return "Restricted, the police and FBI has been called. Do not try to run or hide or else the air force will destroy your house."
+  try:
+    headers={"Authorization":f"Bearer {api}"}
+    data={"inputs":prompt}
+    response=requests.post(url,headers=headers,json=data)
+    image=Image.open(BytesIO(response.content))
+    return image
+  except Exception as e:
+    return e
+st.title("🍌Extremely Advanced High-Tech Image Generator")
+prompt=st.text_input("Enter the description of the required futuristic image: ")
+if st.button("Generate Brilliant Image"):
+  with st.spinner():
+    image=gen(prompt)
+  if isinstance(image,Image.Image):
+    st.image(image)
+    image.save("Brilliant and advancely finished image with futuristic art.png")
+  else:
+    st.error(image)
+
+
+
